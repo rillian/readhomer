@@ -7,6 +7,7 @@
 
 <script>
 import axios from 'axios';
+import xml2js from 'xml2js';
 
 import Reader from '../reader/Reader.vue';
 import ReferenceInput from '../reader/ReferenceInput.vue';
@@ -27,8 +28,14 @@ export default {
     onLookup(urn, reference) {
       this.reference = reference;
       axios
-        .get(`https://homer-api.herokuapp.com/${urn}:${this.reference}/`)
-        .then((r) => { this.passageText = r.data; });
+        .get('https://raw.githubusercontent.com/rillian/atf2tei/master/SIL-034.tei')
+        .then((response) => {
+          xml2js.parseString(response.data, (err, result) => {
+            const lines = result.TEI.text[0].body[0].div[0].div[0].l
+              .map((line, index) => [index + 1, line]);
+            this.passageText = lines;
+          });
+        });
     },
   },
   data() {
