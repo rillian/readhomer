@@ -31,7 +31,7 @@ export default {
         .then((response) => {
           const parser = new DOMParser();
           const tei = parser.parseFromString(response.data, 'text/xml');
-          const lines = Array.from(tei.querySelectorAll('TEI text body div l'))
+          const lines = Array.from(tei.querySelectorAll('TEI text body div[type=tablet] l'))
             .map((line, index) => [index + 1, line.innerHTML]);
           this.passageText = lines;
         });
