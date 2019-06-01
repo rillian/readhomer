@@ -1,5 +1,4 @@
 import axios from 'axios';
-import xml2js from 'xml2js';
 
 import {
   PREVIOUS_CARD,
@@ -88,13 +87,10 @@ export default function createStore() {
       },
       [HOMER_SELECT_CARD]: ({ commit, dispatch }, { urn, card }) => {
         axios
-          .get('https://raw.githubusercontent.com/rillian/atf2tei/master/SIL-034.tei')
+          .get(`https://homer-api.herokuapp.com/${urn}:${card}/`)
           .then((r) => {
-            xml2js.parseString(r.data, (err, result) => {
-              this.console.dir(result);
-              dispatch(SET_PASSAGE_TEXT, { lines: result });
-              commit(HOMER_SELECT_CARD, { urn, card });
-            });
+            dispatch(SET_PASSAGE_TEXT, { lines: r.data });
+            commit(HOMER_SELECT_CARD, { urn, card });
           });
       },
       [PREVIOUS_CARD]: ({ dispatch, state }) => {

@@ -7,7 +7,6 @@
 
 <script>
 import axios from 'axios';
-import xml2js from 'xml2js';
 
 import Reader from '../reader/Reader.vue';
 import ReferenceInput from '../reader/ReferenceInput.vue';
@@ -30,11 +29,11 @@ export default {
       axios
         .get('https://raw.githubusercontent.com/rillian/atf2tei/master/SIL-034.tei')
         .then((response) => {
-          xml2js.parseString(response.data, (err, result) => {
-            const lines = result.TEI.text[0].body[0].div[0].div[0].l
-              .map((line, index) => [index + 1, line]);
-            this.passageText = lines;
-          });
+          const parser = new DOMParser();
+          const tei = parser.parseFromString(response.data, 'text/xml');
+          const lines = Array.from(tei.querySelectorAll('TEI text body div l'))
+            .map((line, index) => [index + 1, line.innerHTML]);
+          this.passageText = lines;
         });
     },
   },
