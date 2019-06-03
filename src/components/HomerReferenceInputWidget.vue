@@ -9,7 +9,7 @@ import ReferenceInput from '../reader/ReferenceInput.vue';
 
 export default {
   scaifeConfig: {
-    displayName: 'Homer Reference Input',
+    displayName: 'CDLI Reference',
     singleton: true,
     location: 'sidebar',
   },

@@ -13,7 +13,7 @@ import ReferenceInput from '../reader/ReferenceInput.vue';
 
 export default {
   scaifeConfig: {
-    displayName: 'Homer Reader',
+    displayName: 'CDLI Reader',
     location: 'both',
   },
   components: {
@@ -39,7 +39,7 @@ export default {
   },
   data() {
     return {
-      reference: '',
+      reference: 'P481090',
       lookupFromStore: false,
       passageText: '',
     };

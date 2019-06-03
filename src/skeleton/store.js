@@ -15,7 +15,7 @@ export default function createStore() {
       rightOpen: true,
       leftOpen: true,
       widgets: {
-        mainWidget: null,
+        mainWidget: 'CDLI Reader',
         right: [],
         left: [],
       },
