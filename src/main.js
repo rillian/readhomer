@@ -3,15 +3,13 @@ import App from './App.vue';
 import store from './store';
 
 import SkeletonPlugin from './skeleton/plugin';
-import globalComponents from './global-components';
 import widgets from './widgets';
 
 Vue.config.productionTip = false;
 
-globalComponents.forEach((component) => {
-  // eslint-disable-next-line no-underscore-dangle
-  Vue.component(component.__file.split('/').pop().split('.')[0], component);
-});
+const files = require.context('./global-components', true, /\.vue$/i);
+files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
+  .forEach(file => Vue.component(file));
 
 Vue.use(SkeletonPlugin, { widgets });
 
