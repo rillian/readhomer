@@ -27,12 +27,13 @@ export default {
     onLookup(urn, reference) {
       this.reference = reference;
       axios
-        .get('https://raw.githubusercontent.com/rillian/atf2tei/master/SIL-034.tei')
+        .get('http://localhost:5000/api/cts?request=GetPassage&urn=urn:cts:cdli:test.P481090')
         .then((response) => {
           const parser = new DOMParser();
-          const tei = parser.parseFromString(response.data, 'text/xml');
-          const lines = Array.from(tei.querySelectorAll('TEI text body div[type=tablet] l'))
-            .map((line, index) => [index + 1, line.innerHTML]);
+          const cts = parser.parseFromString(response.data, 'text/xml');
+          const editionLines = cts.querySelectorAll('TEI text body div[type=edition] l');
+          const lines = Array.from(editionLines)
+            .map((line, index) => [line.getAttribute('n') || index, line.innerHTML]);
           this.passageText = lines;
         });
     },
