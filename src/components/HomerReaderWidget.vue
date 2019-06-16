@@ -25,9 +25,9 @@ export default {
       this.lookupFromStore = lookupFromStore;
     },
     onLookup(urn, reference) {
-      this.reference = reference;
+      this.reference = reference || 'P481090';
       axios
-        .get('https://cdli.thaumas.net/api/cts?request=GetPassage&urn=urn:cts:cdli:test.P481090')
+        .get(`https://cdli.thaumas.net/api/cts?request=GetPassage&urn=urn:cts:cdli:test.${this.reference}`)
         .then((response) => {
           const parser = new DOMParser();
           const cts = parser.parseFromString(response.data, 'text/xml');
