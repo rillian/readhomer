@@ -104,7 +104,7 @@ export default {
   background-color: lightgray;
   padding: 8px;
   margin: 0 auto;
-  corner-radius: 5px;
+  border-radius: 5px;
 }
 .reader-toggles div.enabled {
   background-color: darkgray;
