@@ -30,6 +30,7 @@ export default function createStore() {
       readerTextSize: 'md',
       readerTextWidth: 'normal',
       passageText: [],
+      translationText: [],
       word: null,
 
       // Homer

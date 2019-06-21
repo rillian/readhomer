@@ -1,7 +1,9 @@
 <template>
   <div class="select-passage-reader">
     <ReferenceInput @readFromStore="onReadFromStore" @lookup="onLookup" />
-    <Reader :passage-text="text" />
+    <button v-on:click=switchView>Translation</button>
+    <Reader :passage-text="text" v-if=showText />
+    <Reader :passage-text="translation" v-if=showTranslation />
   </div>
 </template>
 
@@ -34,20 +36,36 @@ export default {
           const editionLines = cts.querySelectorAll('TEI text body div[type=edition] l');
           const lines = Array.from(editionLines)
             .map((line, index) => [line.getAttribute('n') || index, line.innerHTML]);
+          const translationLines = cts.querySelectorAll('TEI text body div[type=translation] l');
+          const translation = Array.from(translationLines)
+            .map((line, index) => [line.getAttribute('n') || index, line.textContent]);
           this.passageText = lines;
+          this.translationText = translation;
+          console.log(translationLines);
+          console.log(translation);
         });
+    },
+    switchView() {
+      this.showText = !this.showText;
+      this.showTranslation = !this.showTranslation;
     },
   },
   data() {
     return {
       reference: 'P481090',
       lookupFromStore: false,
-      passageText: '',
+      passageText: [],
+      translationText: [],
+      showText: true,
+      showTranslation: false,
     };
   },
   computed: {
     text() {
       return this.lookupFromStore ? this.$store.state.passageText : this.passageText;
+    },
+    translation() {
+      return this.lookupFromStore ? this.$store.state.translationText : this.translationText;
     },
   },
 };
