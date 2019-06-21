@@ -1,9 +1,18 @@
 <template>
   <div class="select-passage-reader">
     <ReferenceInput @readFromStore="onReadFromStore" @lookup="onLookup" />
-    <button v-on:click=switchView>Translation</button>
-    <Reader :passage-text="text" v-if=showText />
-    <Reader :passage-text="translation" v-if=showTranslation />
+    <div class="reader-toggles">
+      <button v-on:click=switchText
+              v-bind:class="{enabled: showText}">Transliteration</button>
+      <button v-on:click=switchTranslation
+              v-bind:class="{enabled: showTranslation}">Translation</button>
+    </div>
+    <div class=left>
+      <Reader :passage-text="text" v-if=showText />
+    </div>
+    <div class=right>
+      <Reader :passage-text="translation" v-if=showTranslation />
+    </div>
   </div>
 </template>
 
@@ -41,13 +50,25 @@ export default {
             .map((line, index) => [line.getAttribute('n') || index, line.textContent]);
           this.passageText = lines;
           this.translationText = translation;
-          console.log(translationLines);
-          console.log(translation);
         });
     },
-    switchView() {
+    switchText() {
       this.showText = !this.showText;
+    },
+    toggleText() {
+      if (this.showText) {
+        return 'button-on';
+      }
+      return 'button-off';
+    },
+    switchTranslation() {
       this.showTranslation = !this.showTranslation;
+    },
+    toggleTranslation() {
+      if (this.showTranslation) {
+        return 'button-on';
+      }
+      return 'button-off';
     },
   },
   data() {
@@ -74,5 +95,19 @@ export default {
 <style lang="scss">
 .select-passage-reader {
   width: 100%;
+}
+.left {
+  float: left;
+}
+.right {
+  float: right;
+}
+.reader-toggles {
+  margin-top: -1.5em;
+  display: flex;
+  align-items: center;
+}
+button.enabled {
+  background-color: darkgray;
 }
 </style>
