@@ -38,7 +38,7 @@ export default {
     onLookup(urn, reference) {
       this.reference = reference || 'P481090';
       axios
-        .get(`https://cdli.thaumas.net/api/cts?request=GetPassage&urn=urn:cts:cdli:test.${this.reference}`)
+        .get(`https://cdli.thaumas.net/api/cts?request=GetPassage&urn=${urn}:test.${this.reference}`)
         .then((response) => {
           const parser = new DOMParser();
           const cts = parser.parseFromString(response.data, 'text/xml');
