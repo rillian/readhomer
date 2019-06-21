@@ -37,8 +37,10 @@ export default {
     },
     onLookup(urn, reference) {
       this.reference = reference || 'P481090';
+      const queryUrn = `${urn}:test.${this.reference}`;
+      const url = `https://cdli.thaumas.net/api/cts?request=GetPassage&urn=${queryUrn}`;
       axios
-        .get(`https://cdli.thaumas.net/api/cts?request=GetPassage&urn=${urn}:test.${this.reference}`)
+        .get(url)
         .then((response) => {
           const parser = new DOMParser();
           const cts = parser.parseFromString(response.data, 'text/xml');
@@ -50,6 +52,7 @@ export default {
             .map((line, index) => [line.getAttribute('n') || index, line.textContent]);
           this.passageText = lines;
           this.translationText = translation;
+          this.$store.state.selectedReference = queryUrn;
         });
     },
     switchText() {

@@ -16,7 +16,7 @@ export default {
       return this.$store.state.selectedReference;
     },
     apiLink() {
-      return this.reference && `https://homer-api.herokuapp.com/${this.reference}`;
+      return this.reference && `https://cdli.thaumas.net/api/cts?request=GetPassage&urn=${this.reference}`;
     },
   },
 };
