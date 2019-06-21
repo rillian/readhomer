@@ -2,10 +2,10 @@
   <div class="select-passage-reader">
     <ReferenceInput @readFromStore="onReadFromStore" @lookup="onLookup" />
     <div class="reader-toggles">
-      <button v-on:click=switchText
-              v-bind:class="{enabled: showText}">Transliteration</button>
-      <button v-on:click=switchTranslation
-              v-bind:class="{enabled: showTranslation}">Translation</button>
+      <div v-on:click=switchText
+           v-bind:class="{enabled: showText}">Transliteration</div>
+      <div v-on:click=switchTranslation
+           v-bind:class="{enabled: showTranslation}">Translation</div>
     </div>
     <div class=left>
       <Reader :passage-text="text" v-if=showText />
@@ -55,20 +55,8 @@ export default {
     switchText() {
       this.showText = !this.showText;
     },
-    toggleText() {
-      if (this.showText) {
-        return 'button-on';
-      }
-      return 'button-off';
-    },
     switchTranslation() {
       this.showTranslation = !this.showTranslation;
-    },
-    toggleTranslation() {
-      if (this.showTranslation) {
-        return 'button-on';
-      }
-      return 'button-off';
     },
   },
   data() {
@@ -78,7 +66,9 @@ export default {
       passageText: [],
       translationText: [],
       showText: true,
+      disableText: false,
       showTranslation: false,
+      disableTranslation: false,
     };
   },
   computed: {
@@ -107,7 +97,16 @@ export default {
   display: flex;
   align-items: center;
 }
-button.enabled {
+.reader-toggles div {
+  background-color: lightgray;
+  padding: 8px;
+  margin: 0 auto;
+  corner-radius: 5px;
+}
+.reader-toggles div.enabled {
   background-color: darkgray;
+}
+.reader-toggles div.disabled {
+  color: gray;
 }
 </style>
