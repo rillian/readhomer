@@ -44,6 +44,11 @@ export default {
         .then((response) => {
           const parser = new DOMParser();
           const cts = parser.parseFromString(response.data, 'text/xml');
+          cts.querySelectorAll('TEI text hi[rend=superscript]').forEach((e) => {
+            const n = document.createElement('sup');
+            n.innerHTML = e.innerHTML;
+            e.parentNode.replaceChild(n, e);
+          });
           const editionLines = cts.querySelectorAll('TEI text body div[type=edition] l');
           const lines = Array.from(editionLines)
             .map((line, index) => [line.getAttribute('n') || index, line.innerHTML]);
