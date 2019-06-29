@@ -2,6 +2,7 @@ import HomerReaderWidget from './components/HomerReaderWidget.vue';
 import HomerGridReaderWidget from './components/HomerGridReaderWidget.vue';
 import HomerParallelReaderWidget from './components/HomerParallelReaderWidget.vue';
 import HomerReferenceInputWidget from './components/HomerReferenceInputWidget.vue';
+import CDLIIndex from './components/CDLIIndex.vue';
 import SelectedTextInfoWidget from './reader/SelectedTextInfoWidget.vue';
 import CTSWidget from './reader/CTSWidget.vue';
 import CardReaderWidget from './reader/CardReaderWidget.vue';
@@ -13,6 +14,7 @@ export default {
   [HomerGridReaderWidget.scaifeConfig.displayName]: HomerGridReaderWidget,
   [CardReaderWidget.scaifeConfig.displayName]: CardReaderWidget,
   [HomerParallelReaderWidget.scaifeConfig.displayName]: HomerParallelReaderWidget,
+  [CDLIIndex.scaifeConfig.displayName]: CDLIIndex,
   [TextSizeWidget.scaifeConfig.displayName]: TextSizeWidget,
   [SelectedTextInfoWidget.scaifeConfig.displayName]: SelectedTextInfoWidget,
   [CTSWidget.scaifeConfig.displayName]: CTSWidget,
