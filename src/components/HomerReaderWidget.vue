@@ -44,7 +44,7 @@ export default {
         .then((response) => {
           const parser = new DOMParser();
           const cts = parser.parseFromString(response.data, 'text/xml');
-          cts.querySelectorAll('TEI text hi[rend=superscript]').forEach((e) => {
+          cts.querySelectorAll('TEI text c[type=determinative]').forEach((e) => {
             const n = document.createElement('sup');
             n.innerHTML = e.innerHTML;
             e.parentNode.replaceChild(n, e);
