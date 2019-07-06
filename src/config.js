@@ -10,6 +10,8 @@ import {
   HOMER_SELECT_CARD,
   HOMER_LOOKUP_REFERENCE,
   CDLI_FETCH_URN,
+  CDLI_FETCH_INDEX,
+  CDLI_SET_INDEX,
 } from './constants';
 
 import cards from './homer';
@@ -40,6 +42,9 @@ export default function createStore() {
       selectedCard: null,
       selectedReference: '',
       selectedBaseUrn: '',
+
+      // CDLI
+      works: [],
     },
     getters: {
       getChunks: state => (start, end) => {
@@ -80,6 +85,9 @@ export default function createStore() {
         state.selectedCard = card;
         state.selectedReference = `${urn}:${card}`;
         state.selectedBaseUrn = urn;
+      },
+      [CDLI_SET_INDEX]: (state, works) => {
+        state.works = works;
       },
     },
     actions: {
@@ -138,6 +146,7 @@ export default function createStore() {
           .then((response) => {
             const parser = new DOMParser();
             const cts = parser.parseFromString(response.data, 'text/xml');
+            // FIXME: this might be unintenionally quadratic.
             cts.querySelectorAll('TEI text c[type=determinative]').forEach((e) => {
               const n = document.createElement('sup');
               n.innerHTML = e.innerHTML;
@@ -151,6 +160,25 @@ export default function createStore() {
               .map((line, index) => [line.getAttribute('n') || index, line.textContent]);
             commit(SET_PASSAGE_TEXT, lines);
             commit(SET_TRANSLATION_TEXT, translation);
+          });
+      },
+      [CDLI_FETCH_INDEX]: ({ commit }) => {
+        const url = 'https://cdli.thaumas.net/api/cts?request=GetCapabilities';
+        axios
+          .get(url)
+          .then((response) => {
+            const parser = new DOMParser();
+            const cts = parser.parseFromString(response.data, 'text/xml');
+            const workElements = cts.querySelectorAll('TextInventory work');
+            const works = Array.from(workElements)
+              .map(e => ({
+                urn: e.getAttribute('urn'),
+                label: e.querySelector('label').text,
+              }));
+            return works;
+          })
+          .then((works) => {
+            commit(CDLI_SET_INDEX, works);
           });
       },
     },

@@ -12,6 +12,8 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 import { CDLI_FETCH_URN } from '../constants';
 
 export default {
@@ -23,24 +25,7 @@ export default {
   data() {
     return {
       selectedUrn: null,
-      works: [
-        {
-          label: 'CDLI P481090 LAOS 1, 47',
-          urn: 'urn:cts:cdli:test.P481090',
-        },
-        {
-          label: 'CDLI X001001 bēlšunu',
-          urn: 'urn:cts:cdli:test.X001001',
-        },
-        {
-          label: 'CDLI P464358 Codex Hammurapi',
-          urn: 'urn:cts:cdli:test.P464358',
-        },
-        {
-          label: 'CDLI P497322 Descent of Ishtar',
-          urn: 'urn:cts:cdli:test.P497322',
-        },
-      ],
+      works: [],
     };
   },
   methods: {
@@ -48,6 +33,24 @@ export default {
       this.selectedUrn = urn;
       this.$store.dispatch(CDLI_FETCH_URN, { urn });
     },
+  },
+  mounted() {
+    const url = 'https://cdli.thaumas.net/api/cts?request=GetCapabilities';
+    axios
+      .get(url)
+      .then((response) => {
+        const parser = new DOMParser();
+        const cts = parser.parseFromString(response.data, 'text/xml');
+        const workElements = cts.querySelectorAll('TextInventory work[urn]');
+        return Array.from(workElements)
+          .map(e => ({
+            urn: e.getAttribute('urn'),
+            label: e.querySelector('label').textContent,
+          }));
+      })
+      .then((works) => {
+        this.works = works;
+      });
   },
 };
 </script>
