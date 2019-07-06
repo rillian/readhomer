@@ -1,7 +1,9 @@
 <template>
     <div class=cts-catalog>
         <ul v-if="works.length">
-          <li v-for="work in works" v-bind:key=work.label>
+          <li v-for="work in works" v-bind:key=work.label
+              @click="load(work.urn)"
+          >
             {{ work.label }}
           </li>
         </ul>
@@ -10,27 +12,51 @@
 </template>
 
 <script>
+import { CDLI_FETCH_URN } from '../constants';
+
 export default {
   scaifeConfig: {
     displayName: 'Suggested documents',
     location: 'sidebar',
   },
-  props: ['cts-url'],
+  props: ['ctsUrl'],
   data() {
     return {
+      selectedUrn: null,
       works: [
-        { label: 'CDLI P481090 LAOS 1, 47' },
-        { label: 'CDLI X001001 bēlšunu' },
-        { label: 'CDLI P464358 Codex Hammurapi' },
-        { label: 'CDLI P497322 Descent of Ishtar' },
+        {
+          label: 'CDLI P481090 LAOS 1, 47',
+          urn: 'urn:cts:cdli:test.P481090',
+        },
+        {
+          label: 'CDLI X001001 bēlšunu',
+          urn: 'urn:cts:cdli:test.X001001',
+        },
+        {
+          label: 'CDLI P464358 Codex Hammurapi',
+          urn: 'urn:cts:cdli:test.P464358',
+        },
+        {
+          label: 'CDLI P497322 Descent of Ishtar',
+          urn: 'urn:cts:cdli:test.P497322',
+        },
       ],
     };
+  },
+  methods: {
+    load(urn) {
+      this.selectedUrn = urn;
+      this.$store.dispatch(CDLI_FETCH_URN, { urn });
+    },
   },
 };
 </script>
 
 <style lang="scss">
-    .cts-catalog a {
-        font-size: 14px;
-    }
+  .cts-catalog ul {
+    list-style: none;
+  }
+  .cts-catalog li:hover {
+    background: lightgray;
+  }
 </style>

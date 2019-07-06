@@ -4,10 +4,12 @@ import {
   PREVIOUS_CARD,
   NEXT_CARD,
   SET_PASSAGE_TEXT,
+  SET_TRANSLATION_TEXT,
   SET_TEXT_SIZE,
+  SET_TEXT_WIDTH,
   HOMER_SELECT_CARD,
   HOMER_LOOKUP_REFERENCE,
-  SET_TEXT_WIDTH,
+  CDLI_FETCH_URN,
 } from './constants';
 
 import cards from './homer';
@@ -73,6 +75,7 @@ export default function createStore() {
       [SET_TEXT_SIZE]: (state, size) => { state.readerTextSize = size; },
       [SET_TEXT_WIDTH]: (state, width) => { state.readerTextWidth = width; },
       [SET_PASSAGE_TEXT]: (state, lines) => { state.passageText = lines; },
+      [SET_TRANSLATION_TEXT]: (state, lines) => { state.translationText = lines; },
       [HOMER_SELECT_CARD]: (state, { urn, card }) => {
         state.selectedCard = card;
         state.selectedReference = `${urn}:${card}`;
@@ -85,6 +88,9 @@ export default function createStore() {
       },
       [SET_TEXT_SIZE]: ({ commit }, { size }) => {
         commit(SET_TEXT_SIZE, size);
+      },
+      [SET_TEXT_WIDTH]: ({ commit }, { width }) => {
+        commit(SET_TEXT_WIDTH, width);
       },
       [HOMER_SELECT_CARD]: ({ commit, dispatch }, { urn, card }) => {
         axios
@@ -125,8 +131,27 @@ export default function createStore() {
       [HOMER_LOOKUP_REFERENCE]: ({ dispatch }, { urn, reference }) => {
         dispatch(HOMER_SELECT_CARD, { urn, card: reference });
       },
-      [SET_TEXT_WIDTH]: ({ commit }, { width }) => {
-        commit(SET_TEXT_WIDTH, width);
+      [CDLI_FETCH_URN]: ({ commit }, { urn }) => {
+        const url = `https://cdli.thaumas.net/api/cts?request=GetPassage&urn=${urn}`;
+        axios
+          .get(url)
+          .then((response) => {
+            const parser = new DOMParser();
+            const cts = parser.parseFromString(response.data, 'text/xml');
+            cts.querySelectorAll('TEI text c[type=determinative]').forEach((e) => {
+              const n = document.createElement('sup');
+              n.innerHTML = e.innerHTML;
+              e.parentNode.replaceChild(n, e);
+            });
+            const editionLines = cts.querySelectorAll('TEI text body div[type=edition] l');
+            const lines = Array.from(editionLines)
+              .map((line, index) => [line.getAttribute('n') || index, line.innerHTML]);
+            const translationLines = cts.querySelectorAll('TEI text body div[type=translation] l');
+            const translation = Array.from(translationLines)
+              .map((line, index) => [line.getAttribute('n') || index, line.textContent]);
+            commit(SET_PASSAGE_TEXT, lines);
+            commit(SET_TRANSLATION_TEXT, translation);
+          });
       },
     },
   };

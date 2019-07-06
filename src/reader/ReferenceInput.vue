@@ -10,13 +10,10 @@
 </template>
 
 <script>
-const URN_CDLI = 'urn:cts:cdli';
-
 export default {
   props: ['disableSync'],
   data() {
     return {
-      urn: URN_CDLI,
       reference: '',
       readFromStore: false,
     };
@@ -28,7 +25,7 @@ export default {
   },
   methods: {
     lookup() {
-      this.$emit('lookup', this.urn, this.reference);
+      this.$emit('lookup', this.reference);
     },
   },
 };

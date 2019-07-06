@@ -17,10 +17,10 @@
 </template>
 
 <script>
-import axios from 'axios';
-
 import Reader from '../reader/Reader.vue';
 import ReferenceInput from '../reader/ReferenceInput.vue';
+
+import { CDLI_FETCH_URN } from '../constants';
 
 export default {
   scaifeConfig: {
@@ -35,30 +35,9 @@ export default {
     onReadFromStore(lookupFromStore) {
       this.lookupFromStore = lookupFromStore;
     },
-    onLookup(urn, reference) {
-      this.reference = reference || 'P481090';
-      const queryUrn = `${urn}:test.${this.reference}`;
-      const url = `https://cdli.thaumas.net/api/cts?request=GetPassage&urn=${queryUrn}`;
-      axios
-        .get(url)
-        .then((response) => {
-          const parser = new DOMParser();
-          const cts = parser.parseFromString(response.data, 'text/xml');
-          cts.querySelectorAll('TEI text c[type=determinative]').forEach((e) => {
-            const n = document.createElement('sup');
-            n.innerHTML = e.innerHTML;
-            e.parentNode.replaceChild(n, e);
-          });
-          const editionLines = cts.querySelectorAll('TEI text body div[type=edition] l');
-          const lines = Array.from(editionLines)
-            .map((line, index) => [line.getAttribute('n') || index, line.innerHTML]);
-          const translationLines = cts.querySelectorAll('TEI text body div[type=translation] l');
-          const translation = Array.from(translationLines)
-            .map((line, index) => [line.getAttribute('n') || index, line.textContent]);
-          this.passageText = lines;
-          this.translationText = translation;
-          this.$store.state.selectedReference = queryUrn;
-        });
+    onLookup(reference) {
+      const urn = `urn:cts:cdli:test.${reference}`;
+      this.$store.dispatch(CDLI_FETCH_URN, { urn });
     },
     switchText() {
       this.showText = !this.showText;
@@ -70,7 +49,7 @@ export default {
   data() {
     return {
       reference: 'P481090',
-      lookupFromStore: false,
+      lookupFromStore: true,
       passageText: [],
       translationText: [],
       showText: true,
