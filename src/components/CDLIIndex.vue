@@ -1,7 +1,10 @@
 <template>
     <div class=cts-catalog>
+        <div>
+          Filter: <input v-model=filter>
+        </div>
         <ul v-if="works.length">
-          <li v-for="work in works" v-bind:key=work.label
+          <li v-for="work in filteredWorks" v-bind:key=work.label
               @click="load(work.urn)"
           >
             {{ work.label }}
@@ -26,7 +29,18 @@ export default {
     return {
       selectedUrn: null,
       works: [],
+      filter: '',
     };
+  },
+  computed: {
+    filteredWorks: function() {
+      if (!this.filter) {
+        return this.works;
+      }
+      return this.works.filter(
+        obj => obj.label.includes(this.filter)
+      );
+    },
   },
   methods: {
     load(urn) {
