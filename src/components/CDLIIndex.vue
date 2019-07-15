@@ -33,12 +33,12 @@ export default {
     };
   },
   computed: {
-    filteredWorks: function() {
+    filteredWorks() {
       if (!this.filter) {
         return this.works;
       }
       return this.works.filter(
-        obj => obj.label.includes(this.filter)
+        obj => obj.label.includes(this.filter),
       );
     },
   },
